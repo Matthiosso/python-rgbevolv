@@ -3,7 +3,7 @@ import random
 
 
 class Cell:
-    def __init__(self):
+    def __init__(self, root):
         self.id = str(uuid.UUID)
         self.genome = {
             'red': random.randrange(0, 255),
@@ -11,7 +11,7 @@ class Cell:
             'blue': random.randrange(0, 255)
         }
         self.move_nb = 100
-        self.localisation = (0, 0)
+        self.localisation = (random.randrange(0, root.rows), random.randrange(0, root.cols))
         self.parent_1 = None
         self.parent_2 = None
 

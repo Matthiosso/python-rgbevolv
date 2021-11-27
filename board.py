@@ -37,7 +37,7 @@ class Board:
         self.canvas.delete("all")
 
     def draw_cell(self):
-        cell = Cell()
+        cell = Cell(self.world)
         row_h = int(self.world.size / self.world.rows)
         col_w = int(self.world.size / self.world.cols)
         x1 = cell.localisation[0] * row_h
