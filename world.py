@@ -21,7 +21,8 @@ class World:
         self.window.bind("<Key>", self.key_input)
         self.run = False
 
-    def check_if_key_valid(self, key):
+    @staticmethod
+    def check_if_key_valid(key):
         valid_keys = ['space', 'esc']
         if key in valid_keys:
             return True
