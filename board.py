@@ -11,7 +11,7 @@ class Board:
         self.world = root
         self.canvas = Canvas(self.world.window, width=self.world.size, height=self.world.size)
         self.canvas.pack()
-        self.cell = Cell(self.world, 0)
+        self.cell = Cell(0)
         self.cells = []
         # self.board = np.zeros((self.world.rows, self.world.cols))
         self.draw_cell()
