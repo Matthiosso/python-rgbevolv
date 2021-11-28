@@ -43,4 +43,4 @@ class World:
             self.window.update()
             if self.run:
                 self.window.update_idletasks()
-                self.window.after(DELAY, self.board.draw_cell())
+                self.window.after(DELAY, self.board.move_cell())
