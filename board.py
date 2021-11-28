@@ -55,11 +55,6 @@ class Board:
             cell.move()
             if self.is_move_forbidden(cell):
                 cell.step_back()
-                must_save = not cell_branch.dead_ones or cell.move_nb > cell_branch.dead_ones[-1].move_nb
-
-                cell = cell_branch.new()
-                if must_save:
-                    print('New cell from branch %s nb %i (moves: %i) using hist ' %
-                          (cell_branch.name, cell.id, cell.move_nb), cell.hist)
+                cell_branch.new()
 
         self.draw_cells()

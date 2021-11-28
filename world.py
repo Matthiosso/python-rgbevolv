@@ -3,8 +3,8 @@ from tkinter import Tk
 from board import Board
 
 WINDOW_SIZE = 600
-WORLD_SIZE_HEIGHT = 6
-WORLD_SIZE_WIDTH = 8
+WORLD_SIZE_HEIGHT = 10
+WORLD_SIZE_WIDTH = 15
 DELAY = 100
 
 
