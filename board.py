@@ -11,10 +11,10 @@ class Board:
         self.world = root
         self.canvas = Canvas(self.world.window, width=self.world.size, height=self.world.size)
         self.canvas.pack()
-        self.cell = Cell(0)
-        self.cells = []
+        self.cell = Cell('toto', 0)
+        self.dead_cells = []
         # self.board = np.zeros((self.world.rows, self.world.cols))
-        self.draw_cell()
+        self.draw_cell(self.cell)
         self.world.window.update()
 
     def initialize_board(self):
@@ -33,34 +33,33 @@ class Board:
                 0, i * size / cols, size, i * size / cols,
             )
 
-    def reset(self):
-        self.canvas.delete("all")
 
-    def draw_cell(self):
+    def draw_cell(self, cell: Cell):
         row_h = int(self.world.size / self.world.rows)
         col_w = int(self.world.size / self.world.cols)
-        x1 = self.cell.loc[0] * row_h
-        y1 = self.cell.loc[1] * col_w
+        x1 = cell.loc[0] * row_h
+        y1 = cell.loc[1] * col_w
         x2 = x1 + row_h
         y2 = y1 + col_w
         self.initialize_board()
-        self.canvas.create_rectangle(x1, y1, x2, y2, fill=self.cell.color)
+        self.canvas.create_rectangle(x1, y1, x2, y2, fill=cell.color)
 
-    def is_move_forbidden(self, cell):
+    def is_move_forbidden(self, cell: Cell):
         return cell.loc[0] < 0 or cell.loc[0] > self.world.rows-1 or cell.loc[1] < 0 or cell.loc[1] > self.world.cols-1
 
     def move_cell(self):
         self.cell.move()
         if self.is_move_forbidden(self.cell):
             self.cell.step_back()
-            if len(self.cells) > 0:
-                if self.cell.move_nb > self.cells[-1].move_nb:
-                    self.cells.append(self.cell)
-                    print('New cell nb %i (moves: %i) using hist ' % (len(self.cells), self.cell.move_nb),
-                          self.cell.hist)
-            else:
-                self.cells.append(self.cell)
-                # print('New cell nb %i using hist ' % len(self.cells), self.cell.hist)
+            must_save = not self.dead_cells or self.cell.move_nb > self.dead_cells[-1].move_nb
 
-            self.cell = Cell(len(self.cells), hist=self.cell.hist)
-        self.draw_cell()
+            if must_save:
+                self.dead_cells.append(self.cell)
+
+            self.cell = Cell(name=self.cell.name, id=len(self.dead_cells), hist=self.cell.hist)
+
+            if must_save:
+                print('New cell named %s nb %i (moves: %i) using hist ' %
+                      (self.cell.name, self.cell.id, self.cell.move_nb), self.cell.hist)
+
+        self.draw_cell(self.cell)
