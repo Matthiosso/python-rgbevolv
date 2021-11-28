@@ -36,13 +36,6 @@ class Board:
     def reset(self):
         self.canvas.delete("all")
 
-    # def merge_cells(self, cell1, cell2) -> Cell:
-    #     return Cell(self.world, loc=cell1.loc, genome={
-    #         'red': int((cell1.genome['red'] + cell2.genome['red']) / 2),
-    #         'green': int((cell1.genome['green'] + cell2.genome['green']) / 2),
-    #         'blue': int((cell1.genome['blue'] + cell2.genome['blue']) / 2)
-    #     })
-
     def draw_cell(self):
         row_h = int(self.world.size / self.world.rows)
         col_w = int(self.world.size / self.world.cols)
@@ -53,8 +46,13 @@ class Board:
         self.initialize_board()
         self.canvas.create_rectangle(x1, y1, x2, y2, fill=self.cell.color)
 
+    def is_move_forbidden(self, cell):
+        return cell.loc[0] < 0 or cell.loc[0] > self.world.rows-1 or cell.loc[1] < 0 or cell.loc[1] > self.world.cols-1
+
     def move_cell(self):
-        if not self.cell.move():
+        self.cell.move()
+        if self.is_move_forbidden(self.cell):
+            self.cell.step_back()
             if len(self.cells) > 0:
                 if self.cell.move_nb > self.cells[-1].move_nb:
                     self.cells.append(self.cell)
@@ -64,5 +62,5 @@ class Board:
                 self.cells.append(self.cell)
                 # print('New cell nb %i using hist ' % len(self.cells), self.cell.hist)
 
-            self.cell = Cell(self.world, len(self.cells), hist=self.cell.hist)
+            self.cell = Cell(len(self.cells), hist=self.cell.hist)
         self.draw_cell()
