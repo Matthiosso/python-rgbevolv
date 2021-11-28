@@ -55,7 +55,14 @@ class Board:
 
     def move_cell(self):
         if not self.cell.move():
-            self.cells.append(self.cell)
+            if len(self.cells) > 0:
+                if self.cell.move_nb > self.cells[-1].move_nb:
+                    self.cells.append(self.cell)
+                    print('New cell nb %i (moves: %i) using hist ' % (len(self.cells), self.cell.move_nb),
+                          self.cell.hist)
+            else:
+                self.cells.append(self.cell)
+                # print('New cell nb %i using hist ' % len(self.cells), self.cell.hist)
+
             self.cell = Cell(self.world, len(self.cells), hist=self.cell.hist)
-            print('New cell nb %i using hist ' % self.cell.id, self.cell.hist)
         self.draw_cell()
