@@ -1,8 +1,7 @@
 from tkinter import Canvas
 
-import numpy as np
-
 from cell import Cell
+from cellbranch import CellBranch
 
 
 class Board:
@@ -11,10 +10,9 @@ class Board:
         self.world = root
         self.canvas = Canvas(self.world.window, width=self.world.size, height=self.world.size)
         self.canvas.pack()
-        self.cell = Cell('toto', 0)
-        self.dead_cells = []
-        # self.board = np.zeros((self.world.rows, self.world.cols))
-        self.draw_cell(self.cell)
+        self.cells_pool = [CellBranch(name) for name in ['toto', 'titi', 'tata', 'trotro']]
+        self.board = [[None for _ in range(self.world.cols)] for _ in range(self.world.rows)]
+        self.draw_cells()
         self.world.window.update()
 
     def initialize_board(self):
@@ -33,33 +31,35 @@ class Board:
                 0, i * size / cols, size, i * size / cols,
             )
 
+    def draw_cells(self):
+        self.initialize_board()
+        for cell_b in self.cells_pool:
+            self.draw_cell(cell_b.current_cell, cell_b.color)
 
-    def draw_cell(self, cell: Cell):
+    def draw_cell(self, cell: Cell, color):
         row_h = int(self.world.size / self.world.rows)
         col_w = int(self.world.size / self.world.cols)
         x1 = cell.loc[0] * row_h
         y1 = cell.loc[1] * col_w
         x2 = x1 + row_h
         y2 = y1 + col_w
-        self.initialize_board()
-        self.canvas.create_rectangle(x1, y1, x2, y2, fill=cell.color)
+        self.canvas.create_rectangle(x1, y1, x2, y2, fill=color)
 
     def is_move_forbidden(self, cell: Cell):
-        return cell.loc[0] < 0 or cell.loc[0] > self.world.rows-1 or cell.loc[1] < 0 or cell.loc[1] > self.world.cols-1
+        return cell.loc[0] < 0 or cell.loc[0] > self.world.rows - 1 or cell.loc[1] < 0 or cell.loc[
+            1] > self.world.cols - 1
 
     def move_cell(self):
-        self.cell.move()
-        if self.is_move_forbidden(self.cell):
-            self.cell.step_back()
-            must_save = not self.dead_cells or self.cell.move_nb > self.dead_cells[-1].move_nb
+        for cell_branch in self.cells_pool:
+            cell = cell_branch.current_cell
+            cell.move()
+            if self.is_move_forbidden(cell):
+                cell.step_back()
+                must_save = not cell_branch.dead_ones or cell.move_nb > cell_branch.dead_ones[-1].move_nb
 
-            if must_save:
-                self.dead_cells.append(self.cell)
+                cell = cell_branch.new()
+                if must_save:
+                    print('New cell from branch %s nb %i (moves: %i) using hist ' %
+                          (cell_branch.name, cell.id, cell.move_nb), cell.hist)
 
-            self.cell = Cell(name=self.cell.name, id=len(self.dead_cells), hist=self.cell.hist)
-
-            if must_save:
-                print('New cell named %s nb %i (moves: %i) using hist ' %
-                      (self.cell.name, self.cell.id, self.cell.move_nb), self.cell.hist)
-
-        self.draw_cell(self.cell)
+        self.draw_cells()

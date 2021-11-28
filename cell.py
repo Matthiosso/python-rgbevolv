@@ -2,8 +2,7 @@ import random
 
 
 class Cell:
-    def __init__(self, name, id, hist=None):
-        self.name = name
+    def __init__(self, id=0, hist=None):
         self.id = id
         self.move_nb = 0
         self.color = '#000000'
