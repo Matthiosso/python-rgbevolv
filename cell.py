@@ -19,14 +19,14 @@ class Cell:
             new_loc = self.loc
 
             # Here we make it not to stay at the same place nor to repeat the same last movement.
-            while new_loc == self.loc or (self.move_nb > 1 and len(self.hist) > 1
-                                          and new_loc == self.hist[self.move_nb-2]):
-                move_on_x = bool(random.getrandbits(1))
-                move = random.choice([1, 0, -1])
-                if move_on_x:
-                    new_loc = (self.loc[0] + move, self.loc[1])
+            while new_loc == self.loc or new_loc == (0, 0) or \
+                    (self.move_nb > 1 and len(self.hist) > 1 and new_loc == self.hist[self.move_nb-2]):
+                move_axis = bool(random.getrandbits(1))
+                move_way = bool(random.getrandbits(1))
+                if move_axis:
+                    new_loc = (self.loc[0] + (1 if move_way else -1), self.loc[1])
                 else:
-                    new_loc = (self.loc[0], self.loc[1] + move)
+                    new_loc = (self.loc[0], self.loc[1] + (1 if move_way else -1))
 
             self.loc = new_loc
             self.move_nb += 1
